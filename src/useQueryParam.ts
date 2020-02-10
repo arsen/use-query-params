@@ -48,6 +48,9 @@ export const useQueryParam = <D, D2 = D>(
   if (!rawQuery) {
     const locationIsObject = typeof location === 'object';
     const windowIsDefined = typeof window !== 'undefined';
+    const locationSearch = locationIsObject ? location.search : '';
+    const locationPathName = locationIsObject ? location.pathname : '';
+
     rawQuery = React.useMemo(() => {
       let pathname = {};
 
@@ -55,12 +58,12 @@ export const useQueryParam = <D, D2 = D>(
       if (locationIsObject) {
         // in browser
         if (windowIsDefined) {
-          pathname = parseQueryString(location.search);
+          pathname = parseQueryString(locationSearch);
         } else {
           // not in browser
-          let url = location.pathname;
-          if (location.search) {
-            url += location.search;
+          let url = locationPathName;
+          if (locationSearch) {
+            url += locationSearch;
           }
 
           pathname = parseQueryURL(url).query;
@@ -68,7 +71,7 @@ export const useQueryParam = <D, D2 = D>(
       }
 
       return pathname || {};
-    }, [location.search, location.pathname, locationIsObject, windowIsDefined]);
+    }, [locationSearch, locationPathName, locationIsObject, windowIsDefined]);
   }
 
   // read in the encoded string value
